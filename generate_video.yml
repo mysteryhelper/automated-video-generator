@@ -1,0 +1,36 @@
+name: Generate Automated AI Video
+
+on:
+  workflow_dispatch: # Allows manual run button
+  schedule:
+    - cron: '0 12 * * *' # Triggers automatically at 12:00 PM UTC daily
+
+jobs:
+  build-and-generate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg
+
+    - name: Install Python SDK Packages
+      run: |
+        pip install requests elevenlabs
+
+    - name: Run AI Pipeline Script
+      env:
+        AGNES_API_KEY: ${{ secrets.AGNES_API_KEY }}
+        ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        UPLOAD_POST_API_KEY: ${{ secrets.UPLOAD_POST_API_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: python generate_content.py
