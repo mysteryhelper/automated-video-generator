@@ -17,9 +17,9 @@ VOICE_ID = "JBFqnCBsd6RMkjVDRZzb"  # "George" voice ID
 def validate_key(name, value):
     if not value:
         raise RuntimeError(f"{name} is not set")
-    # Quick sanity checks to avoid accidentally storing a URL/host inside the secret
-    if "googleapis" in value or value.startswith("http"):
-        raise RuntimeError(f"{name} appears malformed (contains host or URL). Please set the raw API key/token.")
+    # Only reject if it looks like a URL
+    if value.startswith("http://") or value.startswith("https://"):
+        raise RuntimeError(f"{name} appears malformed (contains URL). Please set the raw API key/token.")
 
 
 validate_key("GEMINI_API_KEY", GEMINI_API_KEY)
