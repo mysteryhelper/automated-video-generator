@@ -32,9 +32,9 @@ def generate_ai_script_and_metadata():
     """Uses Google Gemini via AI Studio free tier to brainstorm unique content daily."""
     print("🤖 Prompting Gemini for a new script and video parameters...")
 
-    # Build a fixed, valid endpoint and pass the API key via headers or query params.
-    # Do NOT append the key to the hostname.
-    gemini_endpoint = "https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generate"
+    # Build a fixed, valid endpoint using the current Gemini API.
+    # Use v1 endpoint with gemini-pro model (available with free API keys)
+    gemini_endpoint = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent"
 
     headers = {"Content-Type": "application/json"}
     params = None
@@ -54,8 +54,16 @@ def generate_ai_script_and_metadata():
         "SCRIPT: [A brief, cinematic 2-sentence voiceover narration under 30 words total]"
     )
 
-    # Keep payload structure minimal. If your target API expects a different body shape, adjust here.
-    payload = {"input": prompt}
+    # Updated payload structure for gemini-pro:generateContent endpoint
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": prompt}
+                ]
+            }
+        ]
+    }
 
     try:
         response = requests.post(gemini_endpoint, headers=headers, params=params, json=payload, timeout=30)
